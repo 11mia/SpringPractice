@@ -1,8 +1,8 @@
 package com.example.coffee;
 
-import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.jpa.repository.JpaRepository;
 
 
-public interface CoffeeRepository extends CrudRepository<Coffee, String> {
+public interface CoffeeRepository extends JpaRepository<Coffee, Integer>{//extends CrudRepository<Coffee, String> {
     Coffee findByName(String name);
 }
