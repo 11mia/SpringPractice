@@ -1,110 +1,105 @@
 package com.example.coffee.Controller;
 
-
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.example.coffee.Coffee;
 import com.example.coffee.CoffeeRepository;
 
-
-/*
-
-@RestController
-public class CoffeeController {
-
-    @Autowired
-    CoffeeRepository coffeeRepository;
-
-    @GetMapping("/coffee")
-    public List<String> getCoffeeList() {
-        return Arrays.asList("Americano", "Cappuccino", "Vanilla");
-    }
-
-    @GetMapping("/coffee/{name}")
-    public Coffee getCoffeeDetail(@PathVariable String name) {
-        Coffee coffee = coffeeRepository.findByName(name);
-        return coffee;
-    }
-
-    @PostMapping("/coffee")
-    public Coffee insertCoffee(@RequestBody Map<String, String> params) {
-        String name = params.get("name");
-        String price = params.get("price");
-        Coffee coffee = new Coffee(name, Integer.valueOf(price));
-        coffeeRepository.save(coffee);
-        return coffee;
-    }
-    
-    
-    @PostMapping("/jsp")
-    //@RequestMapping("/jsp")
-	public String jspPage(Model model){
-		model.addAttribute("name","��Ƥ��ƾƤ�");
-		return "hello1111";
-	}
-    
-
-}
-*/
-
-/*
+//@RestController
 @Controller
-public class CoffeeController{
-	@RequestMapping(value="/index")
-	public String indexPage(){
-		return  "index";
-	}
-*/
-///*
-//@Controller
-
-//@RequestMapping("/coffee")
-@RestController
-//@RequestMapping(value="/",method = {RequestMethod.GET, RequestMethod.POST})
 public class CoffeeController {
 
 	@Autowired
-	private CoffeeRepository coffeeDao;
+    CoffeeRepository coffeeRepository;
+	
+	@RequestMapping("/list")
+	public String goList(Model model){
+		return "list";	//list.jsp파일로 이동해서 ajax안에서 밑에 list함수가 불리면서 출력된다.
+	}
+	@RequestMapping("/index")
+	public String goIndex(){
+		return "index";	
+	}
+	
+	@RequestMapping(value="/list/show")
+	public ResponseEntity<Object> list(){
+		List<Coffee> list = coffeeRepository.findNotDeleted();
+		return new ResponseEntity<Object>(list,HttpStatus.OK);
+	}
+	
+	
+	
+	@RequestMapping("/detail/{id}")
+	public String goDetail(@PathVariable int id,Model model){
+		model.addAttribute("id",id);
+		return "detail";
+	}
 
+	@RequestMapping(value="/detail/show/{id}")
+	@ResponseBody
+	public ResponseEntity<Object> detail(@PathVariable int id){
+		Coffee coffee = coffeeRepository.findById(id);
+		return new ResponseEntity<Object>(coffee,HttpStatus.OK);
+	}
 	
 
-	//@RequestMapping("/list")
-	//@ResponseBody
-	@RequestMapping("/list")
-	public ArrayList<Coffee> list(Model model){
-
-		ArrayList<Coffee> coffeelist = (ArrayList<Coffee>) coffeeRepository.findAll();
-		model.addAttribute("list",coffeelist);
-		//return "coffee/list";
-		return coffeelist;
-
+	
+	@RequestMapping("/delete/{id}")
+	public String goDelete(@PathVariable int id,Model model){
+		Coffee deleteCoffee = coffeeRepository.findById(id);
+		deleteCoffee.setIsDeleted('y');
+		coffeeRepository.save(deleteCoffee);
+		coffeeRepository.flush();
+		return "delete";
 	}
-	 @Autowired
-	    CoffeeRepository coffeeRepository;
-	@PostMapping("/coffee")
-    public Coffee insertCoffee(@RequestBody Map<String, String> params) {
-        String name = params.get("name");
-        String price = params.get("price");
-        Coffee coffee = new Coffee(name, Integer.valueOf(price));
-        coffeeRepository.save(coffee);
-        return coffee;
-    }
-
-    @GetMapping("/coffee")
-    public List<String> getCoffeeList() {
-        return Arrays.asList("Americano", "Cappuccino", "Vanilla");
-    }
+	
+	@RequestMapping("/register")
+	public String goRegister(Model model){
+		return "register";	
+	}
+	
+	@RequestMapping("/getCoffee")
+	@ResponseBody
+	public void postData(@RequestBody Coffee coffee){
+		String date   = new java.text.SimpleDateFormat("yyyyMMdd").format(new java.util.Date());
+		coffee.setMoDate(date);
+		coffee.setRegDate(date);
+		coffee.setIsDeleted('n');
+		coffeeRepository.save(coffee);
+		return;
+	}
+	
+	@RequestMapping("/modify/{id}")
+	public String goModify(@PathVariable int id,Model model){
+		Coffee modifyCoffee = coffeeRepository.findById(id);
+		System.out.println(modifyCoffee.getName());
+		model.addAttribute("coffee",modifyCoffee);
+		return "modify";
+	}
+	
+	@RequestMapping("/modifyCoffee")
+	@ResponseBody
+	public void modifyData(@RequestBody Coffee coffee){
+		String date   = new java.text.SimpleDateFormat("yyyyMMdd").format(new java.util.Date());
+		Coffee original = coffeeRepository.findById(coffee.getId());
+		String newName = coffee.getName();
+		original.setName(newName);
+		original.setPrice(coffee.getPrice());
+		original.setStock(coffee.getStock());
+		original.setMoDate(date);
+		coffeeRepository.save(original);
+		return;
+	}
+	
 
 }
-//*/

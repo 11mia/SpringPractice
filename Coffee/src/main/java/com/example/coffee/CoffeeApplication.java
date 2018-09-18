@@ -4,33 +4,29 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
 
 
 
 
 @SpringBootApplication
 //@EnableAutoConfiguration(exclude={DataSourceAutoConfiguration.class})
-@RestController
+//@RestController
+
 public class CoffeeApplication implements CommandLineRunner  {
 
 	public static void main(String[] args) {
 		SpringApplication.run(CoffeeApplication.class, args);
 	}
 	
+	
 	@Autowired
 	CoffeeRepository coffeeRepo;
 	
 	public void run(String... args) throws Exception {
-
-		coffeeRepo.save(new Coffee("Ame", 2000,35,3));
-		coffeeRepo.save(new Coffee("Latte", 2500,20,19));
-		coffeeRepo.save(new Coffee("Tea", 3000,22,9));
+		String date   = new java.text.SimpleDateFormat("yyyyMMdd").format(new java.util.Date());
+		coffeeRepo.save(new Coffee("Ame", 2000,35,3,date));
+		coffeeRepo.save(new Coffee("Latte", 2500,20,19,date));
+		coffeeRepo.save(new Coffee("Tea", 3000,22,9,date));
 
 		Iterable<Coffee> coffeeList = coffeeRepo.findAll();
 		
@@ -41,9 +37,10 @@ public class CoffeeApplication implements CommandLineRunner  {
 		
 	}
 	
+
 	
 	
-	
+	/*
 	
 	@RequestMapping(value="/getdata",method=RequestMethod.GET)
 	public ResponseEntity<Object> getData(){
@@ -61,4 +58,5 @@ public class CoffeeApplication implements CommandLineRunner  {
 		System.out.println("coffee.price : "+coffee.getPrice());
 		return new ResponseEntity<Object>("Success",HttpStatus.OK);
 	}
+*/	
 }
