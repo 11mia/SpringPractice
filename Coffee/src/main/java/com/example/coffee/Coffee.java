@@ -1,17 +1,19 @@
 package com.example.coffee;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+
+import com.example.coffee.Constant.CoffeeConstant;
 
 
 @Entity
 @Table(name="coffee")
 public class Coffee {
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    public int id;
+    //@GeneratedValue(strategy = GenerationType.AUTO)
+	
+	@Id
+	String totId;
+	int id;
     String name;
     int price;
     int stock;
@@ -19,6 +21,7 @@ public class Coffee {
     String regDate;//등록일
     String moDate;//수정일
 	char isDeleted;
+	
  
     public Coffee() {
     }
@@ -29,8 +32,9 @@ public class Coffee {
         this.stock = stock;
         this.totSales = totsales;
         this.isDeleted='n';
-		//String date   = new java.text.SimpleDateFormat("yyyyMMdd").format(new java.util.Date());
 		this.regDate=this.moDate=date;
+		this.id = CoffeeConstant.CID;
+		this.totId = "999"+id;
     }
     
     public Coffee(String name, int price) {
@@ -39,12 +43,19 @@ public class Coffee {
         this.stock=1;
         this.totSales = 3;
         this.isDeleted='n';
-
-        
-        
+        this.id = CoffeeConstant.CID;
+		this.totId = "999"+id;
     }
 
-    public void setName(String name) {
+    public String getTotId() {
+		return totId;
+	}
+
+	public void setTotId(String totId) {
+		this.totId = totId;
+	}
+
+	public void setName(String name) {
         this.name = name;
     }
     public String getName() {
