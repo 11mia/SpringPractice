@@ -31,9 +31,9 @@
         	   var htmls='';
 				 htmls+="<h1>Coffee List</h1>";
 	       			htmls+="<table border='1'>";
-	       			htmls+="<tr><th>번호</th><th>이름</th><th>가격</th><th>재고</th><th>총 판매량</th><th>총 판매액</th><th>등록일</th><th>수정일</th><th>판매 shop 정보</th><th>수정</th></tr>";
+	       			htmls+="<tr><th>이름</th><th>가격</th><th>재고</th><th>총 판매량</th><th>총 판매액</th><th>등록일</th><th>수정일</th><th>판매 shop 정보</th><th>수정</th></tr>";
 					htmls+="<tr>";
-					htmls+="<td>"+data.id+"</td>";
+					//htmls+="<td>"+data.id+"</td>";
 					htmls+="<td>"+data.name+"</td>";
 					htmls+="<td>"+data.price+"</td>";
 					htmls+="<td>"+data.stock+"</td>";

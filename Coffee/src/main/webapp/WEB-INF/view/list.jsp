@@ -31,16 +31,18 @@
 				 var htmls='';
 				 htmls+="<h1>Coffee List</h1>";
 	       			htmls+="<table border='1'>";
-	       			htmls+="<tr><th>번호</th>	<th>이름</th>	<th>등록일</th><th>판매하는 shop</th><th>상세 정보</th><th>삭제</th></tr>";
+	       			htmls+="<tr><th>이름</th>	<th>등록일</th><th>판매하는 shop</th><th>상세 정보</th><th>삭제</th></tr>";
 				$.each(data,function(){
-					htmls+="<tr>";
-					htmls+="<td>"+this['id']+"</td>";
-					htmls+="<td>"+this['name']+"</td>";
-					htmls+="<td>"+this['regDate']+"</td>";
-					htmls+="<td>------------</td>";
-					htmls+="<td><a href='/detail/"+this['id']+"'>상세 정보</a></td>";
-					htmls+="<td><a href='/delete/"+this['id']+"''>삭제</a></td>";
-					htmls+="</tr>";
+					//if(this['isDeleted']!='y'){
+						htmls+="<tr>";
+						//htmls+="<td>"+this['id']+"</td>";
+						htmls+="<td>"+this['name']+"</td>";
+						htmls+="<td>"+this['regDate']+"</td>";
+						htmls+="<td>------------</td>";
+						htmls+="<td><a href='/detail/"+this['id']+"'>상세 정보</a></td>";
+						htmls+="<td><a href='/delete/"+this['id']+"''>삭제</a></td>";
+						htmls+="</tr>";
+					//}
 				});
 				htmls+="</table>";
 				htmls+="<a href='/register'>등록<br/></a>";

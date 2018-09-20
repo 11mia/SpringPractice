@@ -27,9 +27,6 @@
             price: $("#coffee_price").val(),
             stock: $("#coffee_stock").val(),
       };
-      console.log("post data:"+modelObj.name);      
-      console.log("post data:"+modelObj.price); 
-      console.log("post data:"+modelObj.stock);
       
       $.ajax({
           type: "POST",

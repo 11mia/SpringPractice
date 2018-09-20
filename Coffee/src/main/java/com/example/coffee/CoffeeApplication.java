@@ -1,5 +1,8 @@
 package com.example.coffee;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -23,7 +26,7 @@ public class CoffeeApplication implements CommandLineRunner  {
 	CoffeeRepository coffeeRepo;
 	
 	public void run(String... args) throws Exception {
-		String date   = new java.text.SimpleDateFormat("yyyyMMdd").format(new java.util.Date());
+		String date   = new SimpleDateFormat("yyyyMMdd").format(new Date());
 		coffeeRepo.save(new Coffee("Ame", 2000,35,3,date));
 		coffeeRepo.save(new Coffee("Latte", 2500,20,19,date));
 		coffeeRepo.save(new Coffee("Tea", 3000,22,9,date));
@@ -40,23 +43,5 @@ public class CoffeeApplication implements CommandLineRunner  {
 
 	
 	
-	/*
 	
-	@RequestMapping(value="/getdata",method=RequestMethod.GET)
-	public ResponseEntity<Object> getData(){
-		Coffee coffee = new Coffee();
-		coffee.setName("Ame");
-		coffee.setPrice(3000);
-		coffee.setStock(4);
-		coffee.setTotSales(12000);
-		return new ResponseEntity<Object>(coffee,HttpStatus.OK);
-	}
-	
-	@RequestMapping(value="/postdata",method=RequestMethod.POST)
-	public ResponseEntity<Object> postData(@RequestBody Coffee coffee){
-		System.out.println("coffee.name : "+coffee.getName());
-		System.out.println("coffee.price : "+coffee.getPrice());
-		return new ResponseEntity<Object>("Success",HttpStatus.OK);
-	}
-*/	
 }

@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,6 +17,7 @@ import com.example.coffee.Coffee;
 import com.example.coffee.CoffeeRepository;
 
 //@RestController
+@CrossOrigin(origins={"*"})
 @Controller
 public class CoffeeController {
 
@@ -55,12 +57,15 @@ public class CoffeeController {
 
 	
 	@RequestMapping("/delete/{id}")
+	//@ResponseBody()
 	public String goDelete(@PathVariable int id,Model model){
 		Coffee deleteCoffee = coffeeRepository.findById(id);
 		deleteCoffee.setIsDeleted('y');
 		coffeeRepository.save(deleteCoffee);
 		coffeeRepository.flush();
 		return "delete";
+		//JOptionPane.showMessageDialog(null, "삭제되었습니다.");
+		//return "list";
 	}
 	
 	@RequestMapping("/register")
@@ -70,12 +75,18 @@ public class CoffeeController {
 	
 	@RequestMapping("/getCoffee")
 	@ResponseBody
-	public void postData(@RequestBody Coffee coffee){
+	public void getData(@RequestBody Coffee coffee){
+		System.out.println("coffeeController-getCoffee");
 		String date   = new java.text.SimpleDateFormat("yyyyMMdd").format(new java.util.Date());
 		coffee.setMoDate(date);
+		System.out.println("CoffeeController-setModate");
 		coffee.setRegDate(date);
+		System.out.println("CoffeeController-setRegDate");
 		coffee.setIsDeleted('n');
-		coffeeRepository.save(coffee);
+		System.out.println("CoffeeController-setIsDeleted");
+		coffeeRepository.save(coffee);	//여기서 문제! java.sql.SQLException: Incorrect string value: '\xE3\x84\xB7\xE3\x84\xB7...' for column 'name' at row 1
+		System.out.println("CoffeeController-save");
+		
 		return;
 	}
 	
