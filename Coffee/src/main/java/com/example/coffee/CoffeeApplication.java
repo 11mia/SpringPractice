@@ -27,9 +27,10 @@ public class CoffeeApplication implements CommandLineRunner  {
 	
 	public void run(String... args) throws Exception {
 		String date   = new SimpleDateFormat("yyyyMMdd").format(new Date());
-		coffeeRepo.save(new Coffee("Ame", 2000,35,3,date));
-		coffeeRepo.save(new Coffee("Latte", 2500,20,19,date));
-		coffeeRepo.save(new Coffee("Tea", 3000,22,9,date));
+		coffeeRepo.save(new Coffee("Ame", 2000,35,0,date));
+		coffeeRepo.save(new Coffee("Latte", 2500,20,0,date));
+		coffeeRepo.save(new Coffee("Tea", 3000,22,0,date));
+		
 
 		Iterable<Coffee> coffeeList = coffeeRepo.findAll();
 		

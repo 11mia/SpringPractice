@@ -1,4 +1,7 @@
 package com.example.coffee;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
@@ -12,7 +15,9 @@ public class Coffee {
     //@GeneratedValue(strategy = GenerationType.AUTO)
 	
 	@Id
-	String totId;
+	String totid;
+	
+	//@GeneratedValue(strategy = GenerationType.AUTO)
 	int id;
     String name;
     int price;
@@ -20,7 +25,8 @@ public class Coffee {
     int totSales;	//총 판매량
     String regDate;//등록일
     String moDate;//수정일
-	char isDeleted;
+	char isdeleted;
+	int totSalesAmt;//총 매출액
 	
  
     public Coffee() {
@@ -31,28 +37,66 @@ public class Coffee {
         this.price = price;
         this.stock = stock;
         this.totSales = totsales;
-        this.isDeleted='n';
+        this.isdeleted='n';
 		this.regDate=this.moDate=date;
-		this.id = CoffeeConstant.CID;
-		this.totId = "999"+id;
+		this.id = ++CoffeeConstant.CID;
+		this.totid = "999"+id;
+		this.totSalesAmt=0;
     }
-    
+    public Coffee(String name,int price,int stock,String date,String totid,int id){	//샵등록시 사용
+    	this.name = name;
+    	this.price = price;
+    	this.stock=stock;
+    	this.totSales = 0;
+        this.isdeleted='n';
+ 		this.regDate=this.moDate=date;
+ 		this.id = id;
+ 		this.totid = totid;
+ 		this.totSalesAmt=0;
+    }
     public Coffee(String name, int price) {
+		String date   = new SimpleDateFormat("yyyyMMdd").format(new Date());
+		this.regDate=this.moDate=date;
         this.name = name;
         this.price = price;
-        this.stock=1;
-        this.totSales = 3;
-        this.isDeleted='n';
-        this.id = CoffeeConstant.CID;
-		this.totId = "999"+id;
+        this.stock=10;
+        this.totSales=this.totSalesAmt=0;
+        this.isdeleted='n';
+		this.id = ++CoffeeConstant.CID;
+
+		this.totid = "999"+id;
     }
 
     public String getTotId() {
-		return totId;
+		return totid;
 	}
 
 	public void setTotId(String totId) {
-		this.totId = totId;
+		this.totid = totId;
+	}
+
+	public String getTotid() {
+		return totid;
+	}
+
+	public void setTotid(String totid) {
+		this.totid = totid;
+	}
+
+	public char getIsdeleted() {
+		return isdeleted;
+	}
+
+	public void setIsdeleted(char isdeleted) {
+		this.isdeleted = isdeleted;
+	}
+
+	public int getTotSalesAmt() {
+		return totSalesAmt;
+	}
+
+	public void setTotSalesAmt(int totSalesAmt) {
+		this.totSalesAmt = totSalesAmt;
 	}
 
 	public void setName(String name) {
@@ -99,10 +143,19 @@ public class Coffee {
     	return id;
     }
     public char getIsDeleted() {
-		return isDeleted;
+		return isdeleted;
 	}
 
 	public void setIsDeleted(char isDeleted) {
-		this.isDeleted = isDeleted;
+		this.isdeleted = isDeleted;
+	}
+	
+	public int getShopId(String totId){
+		int sid = Integer.parseInt(totId.substring(0, 3));
+		return sid;
+	}
+	public int getCoffeeId(String totId){
+		int cid = Integer.parseInt(totId.substring(3));
+		return cid;
 	}
 }

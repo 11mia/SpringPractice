@@ -9,9 +9,8 @@
 </head>
 <body>
 <h1>Coffee!!</h1>
-	<a href="./list">리스트<br/></a>
+	<a href="./list">Coffee List<br/></a>
 	
-	<a href="./sale">판매<br/></a>
 
 </body>
 </html>

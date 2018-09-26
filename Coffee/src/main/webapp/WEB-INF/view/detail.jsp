@@ -24,7 +24,7 @@
    function getDataFromAPI(id) {
        $.ajax({
            url: "/detail/show/"+id,
-           type: "GET",
+           type: "POST",
            dataType:'json',
            success: 
         	  function (data) {
