@@ -31,10 +31,19 @@
 	            stock: $("#coffee_stock").val(),
 	            id:${coffee.id}
 	      };
-	      console.log("post data:"+modelObj.name);      
-	      console.log("post data:"+modelObj.price); 
-	      console.log("post data:"+modelObj.stock);
-	      
+	      if(modelObj.stock<0){
+			  alert("재고는 음수일 수 없습니다. 다시 입력하세요.");
+			  return;
+		   }
+		   if(modelObj.price<0){
+				  alert("가격은 음수일 수 없습니다. 다시 입력하세요.");
+				  return;
+		   }
+		   if(modelObj.name==''){
+			   alert("수정할 이름을 입력하세요.");
+			   return;
+		   }
+		    
 	      $.ajax({
 	          type: "POST",
 	          url: "/modifyCoffee",

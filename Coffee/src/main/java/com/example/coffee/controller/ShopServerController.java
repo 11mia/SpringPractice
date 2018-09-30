@@ -11,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -31,17 +30,13 @@ public class ShopServerController {
 	@ResponseBody
 	public ResponseEntity<Object> coffeeNameId(){	
 		List<Coffee> list = coffeeRepository.findByTotidStartingWithAndIsdeletedLike("999", 'n');
-		for(int i=0;i<list.size();i++)
-			System.out.println(list.get(i).getName());
 		return new ResponseEntity<Object>(list,HttpStatus.OK);
 	}
 	
-	@RequestMapping(value="/getShopInfo")
+	@RequestMapping(value="/getShopInfo")	//샵 등록
 	@ResponseBody
 	public void RegisterShop(@RequestBody String ShopInfo){
-		System.out.println(ShopInfo);
 		String str = ShopInfo.replaceAll("^\"|\"$", "");
-		System.out.println(str);
 		String[] idArr=str.split(",");
 		for(int i=1;i<idArr.length;i++){
 			int cid = Integer.parseInt(idArr[i].substring(3));
@@ -60,18 +55,9 @@ public class ShopServerController {
 	@ResponseBody
 	public ResponseEntity<Object> CoffeeList(){
 		List<Coffee> list = coffeeRepository.findAll();
-		for(int i=0;i<list.size();i++)
-			System.out.println(list.get(i).getTotSalesAmt());
 		return new ResponseEntity<Object>(list,HttpStatus.OK);
 	}
 	
-	@RequestMapping("/list/shopDetail/{id}")
-	@ResponseBody
-	public String ShopDetail(@PathVariable int id,Model model){
-	//	model.addAttribute("id",id);
-		//return "detail";
-		return "";
-	}
 	
 	@RequestMapping("/ShopDel/{sid}")	//샵 삭제한경우
 	@ResponseBody
@@ -85,39 +71,10 @@ public class ShopServerController {
 		return;
 	}
 	
-/*	@RequestMapping("/modShop")
-	@ResponseBody
-	public void modShop(@RequestBody String str){
-		System.out.println(str);
-		String repstr = str.replaceAll("^\"|\"$", "");
-		System.out.println(repstr);
-		String[] idArr=repstr.split(",");
-		String sid = idArr[1].substring(0,3);
-		List<Coffee> delList = coffeeRepository.findByTotidStartingWith(sid);
-		
-		for(int i=0;i<delList.size();i++)
-			coffeeRepository.delete(delList.get(i));
-		
-		//추가
-		for(int i=1;i<idArr.length;i++){
-			int cid = Integer.parseInt(idArr[i].substring(3));
-			Coffee coffee = coffeeRepository.findByTotid("999"+cid);
-			String date   = new SimpleDateFormat("yyyyMMdd").format(new Date());
-			String name = coffee.getName();
-			int stock = 0;
-			int price = coffee.getPrice();
-			Coffee newCoffee = new Coffee(name,price,stock,date,idArr[i],cid);
-			coffeeRepository.save(newCoffee);
-		}
-		
-	}*/
-	
 	@RequestMapping("/modShop")
 	@ResponseBody
 	public void modShop(@RequestBody String str){
-		System.out.println(str);
 		String repstr = str.replaceAll("^\"|\"$", "");
-		System.out.println(repstr);
 		String[] idArr=repstr.split(",");
 		//0에는 name,1부터는 totid
 		for(int i=1;i<idArr.length;i++){
@@ -180,11 +137,7 @@ public class ShopServerController {
 			int amt = Integer.parseInt(info[++i]);	//판매 개수
 			int sale = coffee.getTotSales() + amt;	//판매량+판매개수 
 			coffee.setTotSales(sale);
-			int sales_amt = coffee.getTotSalesAmt();	//원래 판매액
-			int price = coffee.getPrice();	//커피의 가격
-			sales_amt += price*amt;//판매액 업데이트
-			coffee.setTotSalesAmt(sales_amt);
-			coffeeRepository.save(coffee);
+			
 			
 			//더미에 업데이트(판매량, 판매액 ,재고)
 			int cid = coffee.getId();
@@ -197,9 +150,15 @@ public class ShopServerController {
 			coffeeSale += amt;
 			originalCoffee.setTotSales(coffeeSale);
 			
-			int coffeeSaleAmt= originalCoffee.getTotSalesAmt();
+			int coffeeSaleAmt= originalCoffee.getTotSalesAmt();//원래 판매금액-더미메뉴
+			int price = originalCoffee.getPrice();	//dummy의 가격
 			coffeeSaleAmt += price*amt;
 			originalCoffee.setTotSalesAmt(coffeeSaleAmt);
+			
+			int sales_amt = coffee.getTotSalesAmt();	//원래 판매금액-샵의 메뉴
+			sales_amt += price*amt;//판매액 업데이트
+			coffee.setTotSalesAmt(sales_amt);
+			coffeeRepository.save(coffee);
 			
 			coffeeRepository.save(originalCoffee);
 			sum+=price*amt;

@@ -27,7 +27,19 @@
             price: $("#coffee_price").val(),
             stock: $("#coffee_stock").val(),
       };
-      
+      if(modelObj.stock<0){
+		  alert("재고는 음수일 수 없습니다. 다시 입력하세요.");
+		  return;
+	   }
+	   if(modelObj.price<0){
+			  alert("가격은 음수일 수 없습니다. 다시 입력하세요.");
+			  return;
+	   }
+	   if(modelObj.name==''){
+		   alert("이름을 입력하세요.");
+		   return;
+	   }
+	    
       $.ajax({
           type: "POST",
           url: "/getCoffee",
@@ -36,8 +48,8 @@
           },
           data: JSON.stringify(modelObj),
           success: function () {
-          	 alert("등록되었습니다");
-        	  location.href="/list";
+        		  alert("등록되었습니다");
+            	  location.href="/list";
           },
           error: function (jqXHR, textStatus, errorThrown) {
           }

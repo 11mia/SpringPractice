@@ -15,6 +15,8 @@ public interface CoffeeRepository extends JpaRepository<Coffee, Integer>{//exten
     List<Coffee> findByTotidStartingWith(String dummy);
     @Query
    List<Coffee> findByTotidStartingWithAndIsdeletedLike(String dummy,char tf);
+    @Query
+    List<Coffee> findByTotidEndingWithAndIsdeletedLike(String dummy,char tf);
    @Query
     List<Coffee> findByIsdeletedLike(char tf,Sort sort);
     @Query

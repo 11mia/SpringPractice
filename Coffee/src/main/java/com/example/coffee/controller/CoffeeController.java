@@ -45,11 +45,27 @@ public class CoffeeController {
 	
 	
 
-	@RequestMapping(value="/list/sorting")
-	public ResponseEntity<Object> sortedlist(){
-		//List<Coffee> coffee = coffeeRepository.findAll(new Sort(Sort.Direction.DESC,"name"));
-		//List<Coffee> coffee = coffeeRepository.findByIsdeletedLike('n',new Sort(Sort.Direction.DESC,"name"));
-		List<Coffee> coffee = coffeeRepository.findByTotidStartingWithAndIsdeletedLike("999",'n',new Sort(Sort.Direction.DESC,"name"));
+	@RequestMapping(value="/list/sorting/{option}")
+	public ResponseEntity<Object> sortedlist(@PathVariable int option){
+		List<Coffee> coffee;
+		switch(option){
+			case 1:	//nameASC
+			default:
+				coffee = coffeeRepository.findByTotidStartingWithAndIsdeletedLike("999",'n',new Sort(Sort.Direction.ASC,"name"));
+				break;
+			case 2:	//nameDESC
+				coffee = coffeeRepository.findByTotidStartingWithAndIsdeletedLike("999",'n',new Sort(Sort.Direction.DESC,"name"));
+				break;
+			case 3:	//dateASC
+				coffee = coffeeRepository.findByTotidStartingWithAndIsdeletedLike("999",'n',new Sort(Sort.Direction.ASC,"regDate"));
+				break;
+			case 4:	//dateDESC
+				coffee = coffeeRepository.findByTotidStartingWithAndIsdeletedLike("999",'n',new Sort(Sort.Direction.DESC,"regDate"));
+				break;
+			
+		
+		}
+		
 		return new ResponseEntity<Object>(coffee,HttpStatus.OK);
 	}
 
@@ -66,6 +82,13 @@ public class CoffeeController {
 		String tId = "999"+id;
 		Coffee coffee = coffeeRepository.findByTotid(tId);
 		return new ResponseEntity<Object>(coffee,HttpStatus.OK);
+	}
+	
+	@RequestMapping("/detail/shop/{id}")
+	@ResponseBody
+	public ResponseEntity<Object> shopdetail(@PathVariable int id){
+		List<Coffee> list = coffeeRepository.findByTotidEndingWith(Integer.toString(id));
+		return new ResponseEntity<Object>(list,HttpStatus.OK);
 	}
 	
 
@@ -97,28 +120,11 @@ public class CoffeeController {
 		int stock = coffee.getStock();
 		int price = coffee.getPrice();
 		Coffee newCoffee = new Coffee(name,price,stock,0,date);
-		
-		
-		coffeeRepository.save(newCoffee);	//여기서 문제! java.sql.SQLException: Incorrect string value: '\xE3\x84\xB7\xE3\x84\xB7...' for column 'name' at row 1
+		coffeeRepository.save(newCoffee);	
 		System.out.println("CoffeeController-save");
 		return "list";
 	}
-/*	@RequestMapping("/getCoffee")
-	@ResponseBody
-	public void getData(@RequestBody Coffee coffee){
-		System.out.println("coffeeController-getCoffee");
-		String date   = new java.text.SimpleDateFormat("yyyyMMdd").format(new java.util.Date());
-		coffee.setMoDate(date);
-		System.out.println("CoffeeController-setModate");
-		coffee.setRegDate(date);
-		System.out.println("CoffeeController-setRegDate");
-		coffee.setIsDeleted('n');
-		System.out.println("CoffeeController-setIsDeleted");
-		coffeeRepository.save(coffee);	//�뿬湲곗꽌 臾몄젣! java.sql.SQLException: Incorrect string value: '\xE3\x84\xB7\xE3\x84\xB7...' for column 'name' at row 1
-		System.out.println("CoffeeController-save");
-		return;
-	}
-	*/
+
 	
 	@RequestMapping("/modify/{id}")
 	public String goModify(@PathVariable int id,Model model){
@@ -145,7 +151,7 @@ public class CoffeeController {
 	@RequestMapping("/getShopId/{cid}")
 	@ResponseBody
 	public String getShopSid(@PathVariable String cid){
-		List<Coffee> list = coffeeRepository.findByTotidEndingWith(cid);
+		List<Coffee> list = coffeeRepository.findByTotidEndingWithAndIsdeletedLike(cid,'n');
 		String str = "";
 		for(int i=0;i<list.size();i++){
 			Coffee coffee = list.get(i);
@@ -153,7 +159,7 @@ public class CoffeeController {
 			String sid = Integer.toString(coffee.getShopId(totId));
 			if(!sid.equals("999")){
 				str = str + sid;
-				//str = str+",";
+				str = str+",";
 			}
 		}
 		System.out.println(str);

@@ -18,65 +18,90 @@
 
 <body>
 	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+	<div id="sortingButton">
+		<h1>Coffee List</h1>
+		이름
+		<input type='button' name='NameASC' id='1' value='오름차순' onclick='sortingClick(this.id);'/>
+		<input type='button' name='NameDESC' id='2' value='내림차순' onclick='sortingClick(this.id);'/></br>
+		등록일
+		<input type='button' name='DateASC'	id='3' value='오름차순' onclick='sortingClick(this.id);'/>
+		<input type='button' name='DateDESC' id='4' value='내림차순' onclick='sortingClick(this.id);'/>
+	</div>
 	<div id="printWindow"></div>
 	<a href='/register'>등록<br/></a>
 	<a href='/index'>돌아가기<br/></a>
 	<script>
+	
+
 	var Sid='';
-	  function getShopSid(cid) {		 
-	      $.ajax({
-	          url: "/getShopId/"+cid,
-	          type: "GET",
-	          dataType:'json',
-	          
-	          success: 
-	       	  function (data) { 
-	        	  console.log(data);
-	        	 // if(data!=''){
-	        	 	alert("cid :"+cid+" data :"+data);
-	        	 	Sid=data;
-	        	 // }
-				return data;
-	          }, error: function (jqXHR, textStatus, errorThrown) {
-	          }
-	     });
-	  }
+	var Name='';
+	window.onload = function(){
+		getDataFromAPI();
+	}
 	
-	
+	   function getShopSid(cid) {		 
+			      $.ajax({
+			          url: "/getShopId/"+cid,
+			          type: "GET",
+			          async: false,
+			          success:function (data) {
+						Sid=data;
+			          }, error: function (jqXHR, textStatus, errorThrown) {
+			          }
+			     });
+			  }   
+		   
+		   
+		   function getShopName(sid){
+			   console.log("getShopName으로 들어온 sid : "+sid);
+			   $.ajax({
+				   url: "http://9.194.103.128:8090/getShopName/"+sid,
+				   type: "GET",
+				   crossOrigin:true,
+				   async:false,
+				   success:
+					   function(data){
+					   Name= data;
+					   console.log("getShopName으로 들어온 data : "+data);
+				   }, error: function (jqXHR, textStatus, errorThrown) {
+					   console.log("error at getShopName")
+		           }
+			   });
+		   }
+		   
    function getDataFromAPI() { 
        $.ajax({
            url: "/list/show",
            type: "GET",
-           dataType:'json',
+           crossOrigin:true,
            async:false,
            success: 
         	  function (data) {
 				 var htmls='';
-				 htmls+="<h1>Coffee List</h1>";
-				 htmls+="<th class='dropdown'><select class='form-control' style='width:130px' id='ascOrDesc'><option>ASC</option><option>DESC</option></select></th></br>";
-				 htmls+="<input type='button' name='paging' id='paging' value='정렬' onclick='sortingClick();'/></br>"
 				 htmls+="<table border='1'>";
 	       			htmls+="<tr><th>이름</th>	<th>등록일</th><th>판매하는 shop</th><th>상세 정보</th><th>삭제</th></tr>";
 				$.each(data,function(){
+						getShopSid(this['id']);
+						console.log("getShopSid한 후 Sid : "+Sid);
 						htmls+="<tr>";
 						htmls+="<td>"+this['name']+"</td>";
 						htmls+="<td>"+this['regDate']+"</td>";
-					
-						//shopDetail(sid);
-						
-						;
-						console.log(Sid);
-						htmls+="<td>"+getShopSid(this['id'])+"</td>";
+						if(Sid==''){
+							htmls+="<td>해당 메뉴를 판매하는 shop이 없습니다.</td>";
+							console.log("Sid='' : true");
+						}else{
+							getShopName(Sid);
+							console.log("Sid='' : false");
+							console.log("Name : "+Name);
+							Name = Name.slice(0,-1);	//뒤에서 1글자 잘라내기->,지우기
+							htmls+="<td>"+Name+"</td>";
+						}
 						htmls+="<td><a href='/detail/"+this['id']+"'>상세 정보</a></td>";
 						htmls+="<td><a href='/delete/"+this['id']+"'>삭제</a></td>";
 						htmls+="</tr>";
 				});
 				htmls+="</table>";
-				//htmls+="<a href='/register'>등록<br/></a>";
-				//htmls+="<a href='/index'>돌아가기<br/></a>";
-
             	console.log("hello!");
-            	//document.write(htmls);
             	printWindow.innerHTML = htmls; 
 
            }, error: function (jqXHR, textStatus, errorThrown) {
@@ -84,134 +109,49 @@
       });
    }
    
- 
-
-   
-  /* 
-   function getDataFromAPI() { 
+   /////정렬버튼을 누른 후
+   function sortingClick(clicked_id){
+		alert("정렬되었습니다.");
+	
        $.ajax({
-           url: "/list/show",
+           url: "/list/sorting/"+clicked_id,
            type: "GET",
            dataType:'json',
+           
            success: 
         	  function (data) {
-				 var htmls='';
-				 htmls+="<h1>Coffee List</h1>";
-			//	 htmls+="<th class='dropdown'><select class='form-control' style='width:150px' id='rowsNom'><option value='2'>2</option><option value='5'>5</option><option value='7'>Show All</option></select></th></br>";
-				 htmls+="<th class='dropdown'><select class='form-control' style='width:130px' id='ascOrDesc'><option>ASC</option><option>DESC</option></select></th></br>";
-				 htmls+="<input type='button' name='paging' id='paging' value='정렬' onclick='sortingClick();'/></br>"
+        	   var htmls='';
 				 htmls+="<table border='1'>";
 	       			htmls+="<tr><th>이름</th>	<th>등록일</th><th>판매하는 shop</th><th>상세 정보</th><th>삭제</th></tr>";
 				$.each(data,function(){
+						getShopSid(this['id']);
+						console.log("getShopSid한 후 Sid : "+Sid);
 						htmls+="<tr>";
 						htmls+="<td>"+this['name']+"</td>";
 						htmls+="<td>"+this['regDate']+"</td>";
-						htmls+="<td>------------</td>";	//shop list
+						if(Sid==''){
+							htmls+="<td>해당 메뉴를 판매하는 shop이 없습니다.</td>";
+							console.log("Sid='' : true");
+						}else{
+							getShopName(Sid);
+							console.log("Sid='' : false");
+							console.log("Name : "+Name);
+							Name = Name.slice(0,-1);	//뒤에서 1글자 잘라내기->,지우기
+							htmls+="<td>"+Name+"</td>";
+						}
 						htmls+="<td><a href='/detail/"+this['id']+"'>상세 정보</a></td>";
 						htmls+="<td><a href='/delete/"+this['id']+"'>삭제</a></td>";
 						htmls+="</tr>";
 				});
 				htmls+="</table>";
-				htmls+="<a href='/register'>등록<br/></a>";
-				htmls+="<a href='/index'>돌아가기<br/></a>";
-
-            	console.log("hello!");
-            	//document.write(htmls);
-            	printWindow.innerHTML = htmls; 
-           }, error: function (jqXHR, textStatus, errorThrown) {
-           }
-      });
-   }*/
-   
-   
-   
-   
-   
-   function sortingClick() {		 
-		alert("정렬되었습니다!");
-       $.ajax({
-           url: "/list/sorting",
-           type: "GET",
-           dataType:'json',
-           success: 
-        	  function (data) {
-        	  	
-        		 var htmls='';
-				 htmls+="<h1>Coffee List</h1>";
-				 htmls+="<th class='dropdown'><select class='form-control' style='width:150px' id='rowsNom'><option value='2'>2</option><option value='5'>5</option><option value='7'>Show All</option></select></th></br>";
-				 htmls+="<th class='dropdown'><select class='form-control' style='width:130px' id='ascOrDesc'><option>ASC</option><option>DESC</option></select></th></br>";
-				 htmls+="<input type='button' name='paging' id='paging' value='정렬' onclick='sortingClick();'/></br>"
-				 htmls+="<table border='1'>";
-	       			htmls+="<tr><th>이름</th>	<th>등록일</th><th>판매하는 shop</th><th>상세 정보</th><th>삭제</th></tr>";
-				$.each(data,function(){
-						htmls+="<tr>";
-						htmls+="<td>"+this['name']+"</td>";
-						htmls+="<td>"+this['regDate']+"</td>";
-						htmls+="<td>------------</td>";	//shop list
-						htmls+="<td><a href='/detail/"+this['id']+"'>상세 정보</a></td>";
-						htmls+="<td><a href='/delete/"+this['id']+"'>삭제</a></td>";
-						htmls+="</tr>";
-				});
-				htmls+="</table>";
-				htmls+="<a href='/register'>등록<br/></a>";
-				htmls+="<a href='/index'>돌아가기<br/></a>";
-
-            	console.log("hello!");
-            	//document.replace(htmls);
-            	printWindow.innerHTML = htmls; 
+          	console.log("hello!");
+          	printWindow.innerHTML = htmls; 
 
            }, error: function (jqXHR, textStatus, errorThrown) {
            }
       });
    }
-   /*
-   var shopList;
-   shopList = '';
-   function shopDetail(sid) {		 
-      $.ajax({
-          url: "/list/shopDetail"+sid,
-          type: "GET",
-          dataType:'json',
-          success: 
-       	  function (data) {
-        	  
-        	  $.each(data,function(){
-					shopList+=this['name'];
-			});
-			
-          }, error: function (jqXHR, textStatus, errorThrown) {
-          }
-     });
-  }
-   
-   */
-   
-   
-/*    function shopDetail() {		 
-	      $.ajax({
-	          url: "http://9.194.103.128:8090/ShopList",
-	          type: "GET",
-	          dataType:'json',
-	          success: 
-	       	  function (data) { 
-	        	
-	        	  $.each(data,function(){
-						alert(this['sid']);
-				});
-				
-	          }, error: function (jqXHR, textStatus, errorThrown) {
-	          }
-	     });
-	  }
-    */
-   
-
-	window.onload = function(){
-		
-		getDataFromAPI();
-		//shopDetail();
-	}
-
+  
    </script>
 
 </body>
